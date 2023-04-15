@@ -1,0 +1,3 @@
+#define ege_VERSION_MAJOR @ege_VERSION_MAJOR@
+#define ege_VERSION_MINOR @ege_VERSION_MINOR@
+#define ege_VERSION_PATCH @ege_VERSION_PATCH@
