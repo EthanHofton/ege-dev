@@ -1,4 +1,5 @@
 include(FetchContent)
+
 FetchContent_Declare(
   ere
   GIT_REPOSITORY https://github.com/EthanHofton/ere.git
@@ -6,10 +7,18 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(ere)
 
+FetchContent_Declare(
+    EnTT
+  GIT_REPOSITORY https://github.com/skypjack/entt.git
+)
+FetchContent_MakeAvailable(EnTT)
+
+
 
 set(EXE_NAME "ege")
 
 set(SOURCES
+    scene.cpp
     main_layer.cpp
     main.cpp
 )
@@ -22,4 +31,10 @@ target_include_directories(${EXE_NAME} PUBLIC
     ${CMAKE_BINARY_DIR}/include}
 )
 
-target_link_libraries(${EXE_NAME} PUBLIC ere)
+target_link_libraries(${EXE_NAME} PUBLIC
+    ere
+)
+
+target_link_libraries(${EXE_NAME} PRIVATE
+    EnTT::EnTT
+)

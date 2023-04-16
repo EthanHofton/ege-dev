@@ -4,6 +4,8 @@
 #include <ege/core/logger.hpp>
 #include <ere/core/layer.hpp>
 #include <imgui.h>
+#include <ege/ecs/scene.hpp>
+#include <ere/core/core.hpp>
 
 namespace ege {
 
@@ -30,6 +32,8 @@ private:
     std::string m_scene_viewport_name = "Scene Viewport";
     std::string m_game_viewport_name = "Game Viewport";
     std::string m_project_explorer_name = "Project Explorer";
+
+    std::vector<ere::ref<scene>> m_scenes;
 };
 
 }

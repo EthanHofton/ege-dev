@@ -1,10 +1,24 @@
 #include <ege/layers/main_layer.hpp>
 #include <imgui_internal.h>
+#include <ege/ecs/entity.hpp>
+#include <ege/ecs/components/tag.hpp>
 
 namespace ege {
 
 bool main_layer::on_attach(ere::attach_event& e) {
     EGE_INFO("Main layer attached");
+
+    m_scenes.push_back(ere::createRef<scene>());
+
+    m_scenes[0]->create_entity();
+    m_scenes[0]->create_entity();
+    m_scenes[0]->create_entity();
+    m_scenes[0]->create_entity();
+
+    m_scenes.push_back(ere::createRef<scene>());
+
+    m_scenes[1]->create_entity();
+
     return false;
 }
 
@@ -73,6 +87,30 @@ void main_layer::draw_inspector() {
 
 void main_layer::draw_scene_hierarchy() {
     ImGui::Begin(m_scene_hierarchy_name.c_str());
+
+    if (ImGui::BeginTabBar("Scenes")) {
+        for (int i = 0; i < m_scenes.size(); i++) {
+            auto& scene = m_scenes[i];
+
+            if (ImGui::BeginTabItem(scene->get_name().c_str())) {
+
+                static int item_current = 2;
+                auto entities = scene->get_entities();
+                for (int j = 0; j < entities.size(); j++) {
+                    auto& entity = entities[j];
+                    if (ImGui::Selectable(entity.get_component<ege::tag>().m_tag.c_str()), item_current == j) {
+                        item_current = j;
+                    }
+                }
+
+                ImGui::EndTabItem();
+            }
+        }
+
+        ImGui::EndTabBar();
+    }
+
+
     ImGui::End();
 }
 
