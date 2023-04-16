@@ -14,6 +14,22 @@ public:
     bool on_detach(ere::detach_event& e) override;
     bool on_update(ere::update_event& e) override;
     bool on_imgui_update(ere::imgui_update_event& e) override;
+
+private:
+
+    void setup_dockspace();
+    void draw_menu_bar();
+    void draw_inspector();
+    void draw_scene_hierarchy();
+    void draw_scene_viewport();
+    void draw_game_viewport();
+    void draw_project_explorer();
+
+    std::string m_inspector_name = "Inspector";
+    std::string m_scene_hierarchy_name = "Scene Hierarchy";
+    std::string m_scene_viewport_name = "Scene Viewport";
+    std::string m_game_viewport_name = "Game Viewport";
+    std::string m_project_explorer_name = "Project Explorer";
 };
 
 }
