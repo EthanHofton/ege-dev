@@ -19,6 +19,8 @@ bool main_layer::on_attach(ere::attach_event& e) {
 
     m_scenes[1]->create_entity();
 
+    m_active_scene = m_scenes[0];
+
     return false;
 }
 
@@ -89,17 +91,20 @@ void main_layer::draw_scene_hierarchy() {
     ImGui::Begin(m_scene_hierarchy_name.c_str());
 
     if (ImGui::BeginTabBar("Scenes")) {
-        for (int i = 0; i < m_scenes.size(); i++) {
-            auto& scene = m_scenes[i];
-
+        for (auto& scene : m_scenes) {
             if (ImGui::BeginTabItem(scene->get_name().c_str())) {
+                if (m_active_scene != scene) {
+                    m_selected_entity = ege::entity();
+                }
 
-                static int item_current = 2;
+                m_active_scene = scene;
+
                 auto entities = scene->get_entities();
                 for (int j = 0; j < entities.size(); j++) {
-                    auto& entity = entities[j];
-                    if (ImGui::Selectable(entity.get_component<ege::tag>().m_tag.c_str()), item_current == j) {
-                        item_current = j;
+                    auto& e = entities[j];
+                    if (ImGui::Selectable(e.get_component<ege::tag>().m_tag.c_str(), m_selected_entity == e)) {
+                        m_selected_entity = e;
+                        EGE_INFO("Selected entity: {}", e.get_component<ege::tag>().m_tag);
                     }
                 }
 

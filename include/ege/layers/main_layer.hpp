@@ -6,6 +6,7 @@
 #include <imgui.h>
 #include <ege/ecs/scene.hpp>
 #include <ere/core/core.hpp>
+#include <ege/ecs/entity.hpp>
 
 namespace ege {
 
@@ -34,6 +35,8 @@ private:
     std::string m_project_explorer_name = "Project Explorer";
 
     std::vector<ere::ref<scene>> m_scenes;
+    ere::ref<scene> m_active_scene;
+    entity m_selected_entity;
 };
 
 }

@@ -13,7 +13,7 @@ public:
 
     scene() {
         static int created_scenes = 0;
-        m_scene_name = "Scene" + std::to_string(created_scenes++);
+        m_scene_name = "Scene " + std::to_string(created_scenes++);
     };
 
     ege::entity create_entity();

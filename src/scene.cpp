@@ -10,7 +10,7 @@ ege::entity scene::create_entity() {
 
     ege::entity e = ege::entity(m_registry.create(), shared_from_this());
     e.add_component<ege::UUID>(ege::UUID_generator::generate());
-    e.add_component<ege::tag>(ege::tag_generator::generate("Entity" + std::to_string(created_entities++)));
+    e.add_component<ege::tag>(ege::tag_generator::generate("Entity " + std::to_string(created_entities++)));
 
     return e;
 }
