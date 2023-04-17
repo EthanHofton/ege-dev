@@ -2,6 +2,7 @@
 #define __EGE_TAG_HPP__
 
 #include <string>
+#include <ege/ecs/systems/debug.hpp>
 
 namespace ege {
 
@@ -16,6 +17,12 @@ struct tag_generator {
         return u;
     }
 };
+
+template<>
+inline void debug_system::component_editor_widget<ege::tag>(entt::registry& t_registery, entt::entity t_entity) {
+    auto& tag = t_registery.get<ege::tag>(t_entity);
+    ImGui::Text("Tag: %s", tag.m_tag.c_str());
+}
 
 }
 

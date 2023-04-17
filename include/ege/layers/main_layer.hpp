@@ -6,7 +6,6 @@
 #include <imgui.h>
 #include <ege/ecs/scene.hpp>
 #include <ere/core/core.hpp>
-#include <ege/ecs/entity.hpp>
 
 namespace ege {
 
@@ -36,7 +35,7 @@ private:
 
     std::vector<ere::ref<scene>> m_scenes;
     ere::ref<scene> m_active_scene;
-    entity m_selected_entity;
+    entt::entity m_selected_entity;
 };
 
 }

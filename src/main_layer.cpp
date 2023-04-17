@@ -1,7 +1,5 @@
 #include <ege/layers/main_layer.hpp>
 #include <imgui_internal.h>
-#include <ege/ecs/entity.hpp>
-#include <ege/ecs/components/tag.hpp>
 
 namespace ege {
 
@@ -30,6 +28,8 @@ bool main_layer::on_detach(ere::detach_event& e) {
 }
 
 bool main_layer::on_update(ere::update_event& e) {
+    m_active_scene->on_update(e);
+
     return false;
 }
 
@@ -42,6 +42,8 @@ bool main_layer::on_imgui_update(ere::imgui_update_event& e) {
     draw_scene_viewport();
     draw_game_viewport();
     draw_project_explorer();
+
+    m_active_scene->on_imgui_update(e);
 
     return false;
 }
@@ -83,6 +85,9 @@ void main_layer::draw_menu_bar() {
 
 void main_layer::draw_inspector() {
     ImGui::Begin(m_inspector_name.c_str());
+
+    m_active_scene->on_inspector_draw();
+
     ImGui::End();
 
 }
@@ -90,43 +95,27 @@ void main_layer::draw_inspector() {
 void main_layer::draw_scene_hierarchy() {
     ImGui::Begin(m_scene_hierarchy_name.c_str());
 
-    if (ImGui::BeginTabBar("Scenes")) {
-        for (auto& scene : m_scenes) {
-            if (ImGui::BeginTabItem(scene->get_name().c_str())) {
-                if (m_active_scene != scene) {
-                    m_selected_entity = ege::entity();
-                }
-
-                m_active_scene = scene;
-
-                auto entities = scene->get_entities();
-                for (int j = 0; j < entities.size(); j++) {
-                    auto& e = entities[j];
-                    if (ImGui::Selectable(e.get_component<ege::tag>().m_tag.c_str(), m_selected_entity == e)) {
-                        m_selected_entity = e;
-                        EGE_INFO("Selected entity: {}", e.get_component<ege::tag>().m_tag);
-                    }
-                }
-
-                ImGui::EndTabItem();
-            }
-        }
-
-        ImGui::EndTabBar();
+    for (auto& scene : m_scenes) {
+        scene->on_hierarchy_draw(m_active_scene);
     }
-
 
     ImGui::End();
 }
 
 void main_layer::draw_scene_viewport() {
     ImGui::Begin(m_scene_viewport_name.c_str());
+
+    m_active_scene->on_scene_viewport_draw();
+
     ImGui::End();
 
 }
 
 void main_layer::draw_game_viewport() {
     ImGui::Begin(m_game_viewport_name.c_str());
+
+    m_active_scene->simulate();
+
     ImGui::End();
 
 }
