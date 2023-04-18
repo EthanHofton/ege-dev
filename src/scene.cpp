@@ -7,7 +7,7 @@ scene::scene() {
     static int created_scenes = 0;
     m_scene_name = "Scene " + std::to_string(created_scenes++);
 
-    m_debug_system = std::make_shared<debug_system>();
+    m_debug_system = std::make_shared<inspector_system>();
     m_debug_system->register_component<tag>("Tag");
     m_debug_system->register_component<UUID>("UUID");
 
@@ -152,8 +152,13 @@ void scene::on_hierarchy_draw(ere::ref<scene>& t_active_scene) {
             auto& tag = m_registry.get<ege::tag>(entity);
 
             if (ImGui::Selectable(tag.m_tag.c_str(), m_selected_entity == entity)) {
-                t_active_scene = t;
-                m_selected_entity = entity;
+                if (m_selected_entity == entity) {
+                    m_selected_entity = entt::null;
+                } else {
+                    t_active_scene = t;
+                    m_selected_entity = entity;
+                }
+
             }
         }
 

@@ -6,7 +6,7 @@
 
 namespace ege {
 
-class debug_system : public system {
+class inspector_system : public system {
 public:
 
     template<class Component>
@@ -14,7 +14,7 @@ public:
 
     template<class Component>
     void register_component(const std::string& t_name) {
-        m_registered_components.push_back({t_name, std::bind(&debug_system::component_editor_widget<Component>, this, std::placeholders::_1, std::placeholders::_2)});
+        m_registered_components.push_back({t_name, std::bind(&inspector_system::component_editor_widget<Component>, this, std::placeholders::_1, std::placeholders::_2)});
     }
 
     inline void on_inspector_draw(entt::registry& t_registery, entt::entity t_entity) override {

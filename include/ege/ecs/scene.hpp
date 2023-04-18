@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "system.hpp"
-#include <ege/ecs/systems/debug.hpp>
+#include <ege/ecs/systems/inspector.hpp>
 #include <ege/ecs/components/UUID.hpp>
 #include <ege/ecs/components/tag.hpp>
 
@@ -67,7 +67,7 @@ private:
     std::vector<std::shared_ptr<system>> m_systems;
 
     std::string m_scene_name;
-    ere::ref<debug_system> m_debug_system;
+    ere::ref<inspector_system> m_debug_system;
 
 };
 
