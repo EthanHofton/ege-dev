@@ -1,52 +1,76 @@
 #include <ege/layers/main_layer.hpp>
 #include <imgui_internal.h>
+#include <ege/ecs/system_manager.hpp>
+#include <ege/ecs/systems/scene_system.hpp>
+
 
 namespace ege {
 
 bool main_layer::on_attach(ere::attach_event& e) {
-    EGE_INFO("Main layer attached");
-
-    m_scenes.push_back(ere::createRef<scene>());
-
-    m_scenes[0]->create_entity();
-    m_scenes[0]->create_entity();
-    m_scenes[0]->create_entity();
-    m_scenes[0]->create_entity();
-
-    m_scenes.push_back(ere::createRef<scene>());
-
-    m_scenes[1]->create_entity();
-
-    m_active_scene = m_scenes[0];
-
+    system_manager::get<scene_system>()->add_scene("Scene 1");
     return false;
 }
 
 bool main_layer::on_detach(ere::detach_event& e) {
-    EGE_INFO("Main layer detached");
     return false;
 }
 
 bool main_layer::on_update(ere::update_event& e) {
-    m_active_scene->on_update(e);
-
+    system_manager::get<scene_system>()->on_update(e);
     return false;
 }
 
 bool main_layer::on_imgui_update(ere::imgui_update_event& e) {
-
     setup_dockspace();
-
-    draw_inspector();
-    draw_scene_hierarchy();
-    draw_scene_viewport();
-    draw_game_viewport();
     draw_project_explorer();
 
-    m_active_scene->on_imgui_update(e);
+    system_manager::get<scene_system>()->on_imgui_update(e);
 
     return false;
 }
+
+bool main_layer::on_key_pressed(ere::key_pressed_event& e) {
+    system_manager::get<scene_system>()->on_key_pressed(e);
+
+    return false;
+}
+
+bool main_layer::on_key_released(ere::key_released_event& e) {
+    system_manager::get<scene_system>()->on_key_released(e);
+
+    return false;
+}
+
+bool main_layer::on_key_typed(ere::key_typed_event& e) {
+    system_manager::get<scene_system>()->on_key_typed(e);
+
+    return false;
+}
+
+bool main_layer::on_mouse_button_pressed(ere::mouse_button_pressed_event& e) {
+    system_manager::get<scene_system>()->on_mouse_button_pressed(e);
+
+    return false;
+}
+
+bool main_layer::on_mouse_button_released(ere::mouse_button_released_event& e) {
+    system_manager::get<scene_system>()->on_mouse_button_released(e);
+
+    return false;
+}
+
+bool main_layer::on_mouse_moved(ere::mouse_moved_event& e) {
+    system_manager::get<scene_system>()->on_mouse_moved(e);
+
+    return false;
+}
+
+bool main_layer::on_mouse_scrolled(ere::mouse_scrolled_event& e) {
+    system_manager::get<scene_system>()->on_mouse_scrolled(e);
+
+    return false;
+}
+
 
 void main_layer::draw_menu_bar() {
     if (ImGui::BeginMenuBar()) {
@@ -83,47 +107,9 @@ void main_layer::draw_menu_bar() {
     }
 }
 
-void main_layer::draw_inspector() {
-    ImGui::Begin(m_inspector_name.c_str());
-
-    m_active_scene->on_inspector_draw();
-
-    ImGui::End();
-
-}
-
-void main_layer::draw_scene_hierarchy() {
-    ImGui::Begin(m_scene_hierarchy_name.c_str());
-
-    for (auto& scene : m_scenes) {
-        scene->on_hierarchy_draw(m_active_scene);
-    }
-
-    ImGui::End();
-}
-
-void main_layer::draw_scene_viewport() {
-    ImGui::Begin(m_scene_viewport_name.c_str());
-
-    m_active_scene->on_scene_viewport_draw();
-
-    ImGui::End();
-
-}
-
-void main_layer::draw_game_viewport() {
-    ImGui::Begin(m_game_viewport_name.c_str());
-
-    m_active_scene->simulate();
-
-    ImGui::End();
-
-}
-
 void main_layer::draw_project_explorer() {
-    ImGui::Begin(m_project_explorer_name.c_str());
+    ImGui::Begin("Project Explorer");
     ImGui::End();
-
 }
 
 void main_layer::setup_dockspace() {

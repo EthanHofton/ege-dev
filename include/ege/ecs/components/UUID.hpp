@@ -3,7 +3,7 @@
 
 #include <string>
 #include <util/algo.hpp>
-#include <ege/ecs/systems/inspector.hpp>
+#include <ege/ecs/systems/inspector_system.hpp>
 
 namespace ege {
 
@@ -23,6 +23,11 @@ template<>
 inline void inspector_system::component_editor_widget<UUID>(entt::registry& t_registery, entt::entity t_entity) {
     auto& uuid = t_registery.get<UUID>(t_entity);
     ImGui::Text("UUID: %s", uuid.m_uuid.c_str());
+}
+
+template<>
+inline void inspector_system::component_add<UUID>(entt::registry& t_registery, entt::entity t_entity) {
+    t_registery.emplace<UUID>(t_entity, (UUID){UUID_generator::generate()});
 }
 
 }

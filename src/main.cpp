@@ -13,7 +13,7 @@ ref<ere::application> ere::ere_create_application() {
     app->set_window_swap_interval(0);
     app->set_window_title("Ethans Game Engine");
     app->set_background_color(ege::BASE_COLOR);
-    app->set_window_size({1280, 720});
+    app->set_window_size({2342, 1120});
 
     return app;
 }

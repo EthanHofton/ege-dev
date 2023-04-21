@@ -18,6 +18,10 @@ FetchContent_MakeAvailable(EnTT)
 set(EXE_NAME "ege")
 
 set(SOURCES
+    inspector_system.cpp
+    scene_system.cpp
+    system_manager.cpp
+    system.cpp
     scene.cpp
     main_layer.cpp
     main.cpp

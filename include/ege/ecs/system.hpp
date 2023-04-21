@@ -1,38 +1,36 @@
 #ifndef __EGE_SYSTEM_HPP__
 #define __EGE_SYSTEM_HPP__
 
-#include <ere/core/layer.hpp>
-#include <entt/entt.hpp>
+#include "i_system.hpp"
+#include <ege/events/app_events.hpp>
+#include <ege/events/key_events.hpp>
+#include <ege/events/mouse_events.hpp>
 
 namespace ege {
 
-class system {
+class system : public i_system {
 public:
 
-    virtual void on_update(ere::update_event& event, entt::registry& t_registery) {}
-    virtual void on_imgui_update(ere::imgui_update_event& event, entt::registry& t_registery) {}
+    virtual ~system() = default;
 
-    virtual void on_attach(ere::attach_event& event, entt::registry& t_registery) {}
-    virtual void on_detach(ere::detach_event& event, entt::registry& t_registery) {}
+    virtual bool on_pre_draw(pre_draw_event& event) { return false; }
+    virtual bool on_draw(draw_event& event) { return false; }
+    virtual bool on_gui_draw(gui_draw_event& event) { return false; }
+    virtual bool on_post_draw(post_draw_event& event) { return false; }
+    virtual bool on_update(update_event& event) { return false; }
+    virtual bool on_attach(attach_event& event) { return false; }
+    virtual bool on_detach(detach_event& event) { return false; }
 
-    virtual void on_key_pressed(ere::key_pressed_event& event, entt::registry& t_registery) {}
-    virtual void on_key_released(ere::key_released_event& event, entt::registry& t_registery) {}
-    virtual void on_key_typed(ere::key_typed_event& event, entt::registry& t_registery) {}
+    virtual bool on_key_pressed(key_pressed_event& event) { return false; }
+    virtual bool on_key_released(key_released_event& event) { return false; }
+    virtual bool on_key_typed(key_typed_event& event) { return false; }
 
-    virtual void on_mouse_button_pressed(ere::mouse_button_pressed_event& event, entt::registry& t_registery) {}
-    virtual void on_mouse_button_released(ere::mouse_button_released_event& event, entt::registry& t_registery) {}
-    virtual void on_mouse_moved(ere::mouse_moved_event& event, entt::registry& t_registery) {}
-    virtual void on_mouse_scrolled(ere::mouse_scrolled_event& event, entt::registry& t_registery) {}
+    virtual bool on_mouse_button_pressed(mouse_button_pressed_event& event) { return false; }
+    virtual bool on_mouse_button_released(mouse_button_released_event& event) { return false; }
+    virtual bool on_mouse_moved(mouse_moved_event& event) { return false; }
+    virtual bool on_mouse_scrolled(mouse_scrolled_event& event) { return false; }
 
-    virtual void on_window_resized(ere::window_resized_event& event, entt::registry& t_registery) {}
-    virtual void on_window_moved(ere::window_moved_event& event, entt::registry& t_registery) {}
-    virtual void on_window_minimized(ere::window_minimized_event& event, entt::registry& t_registery) {}
-    virtual void on_window_maximized(ere::window_maximized_event& event, entt::registry& t_registery) {}
-    virtual void on_window_focus(ere::window_focus_event& event, entt::registry& t_registery) {}
-    virtual void on_window_closed(ere::window_closed_event& event, entt::registry& t_registery) {}
-
-    virtual void on_inspector_draw(entt::registry& t_registery, entt::entity t_entity) {}
-
+    virtual void on_event(ege_event& t_e) override final;
 };
 
 }
