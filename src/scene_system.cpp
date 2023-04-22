@@ -1,6 +1,9 @@
 #include <ege/ecs/systems/scene_system.hpp>
 #include <ege/ecs/system_manager.hpp>
 #include <ege/ecs/scene.hpp>
+#include <ege/ecs/components/mesh.hpp>
+#include <ege/ecs/components/renderer.hpp>
+#include <ege/ecs/components/transform.hpp>
 
 namespace ege {
 
@@ -11,6 +14,22 @@ bool scene_system::on_gui_draw(gui_draw_event& event) {
         if (ImGui::MenuItem("New Entity")) {
             auto e = m_selected_scene->create_entity();
             m_selected_entity = e;
+        }
+
+        if (ImGui::MenuItem("New Cube")) {
+            auto e = m_selected_scene->create_entity("Cube");
+            m_selected_entity = e;
+            m_selected_scene->get_registry().emplace<mesh>(e, mesh_generator::generate_cube_mesh({1,1,1}));
+            m_selected_scene->get_registry().emplace<renderer>(e);
+            m_selected_scene->get_registry().emplace<transform>(e);
+        }
+
+        if (ImGui::MenuItem("New Sphere")) {
+            auto e = m_selected_scene->create_entity("Sphere");
+            m_selected_entity = e;
+            m_selected_scene->get_registry().emplace<mesh>(e, mesh_generator::generate_sphere_mesh(1));
+            m_selected_scene->get_registry().emplace<renderer>(e);
+            m_selected_scene->get_registry().emplace<transform>(e);
         }
 
         ImGui::EndPopup();

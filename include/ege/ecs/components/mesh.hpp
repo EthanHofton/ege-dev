@@ -17,16 +17,22 @@ enum class mesh_type {
 struct mesh {
     std::vector<glm::vec3> m_positions;
     bool m_positions_dirty = false;
+    bool m_positions_size_dirty = false;
     std::vector<glm::vec2> m_uvs;
     bool m_uvs_dirty = false;
+    bool m_uvs_size_dirty = false;
     std::vector<glm::vec3> m_normals;
     bool m_normals_dirty = false;
+    bool m_normals_size_dirty = false;
     std::vector<glm::vec3> m_tangents;
     bool m_tangents_dirty = false;
+    bool m_tangents_size_dirty = false;
     std::vector<glm::vec3> m_bitangents;
     bool m_bitangents_dirty = false;
+    bool m_bitangents_size_dirty = false;
     std::vector<uint32_t> m_indices;
     bool m_indices_dirty = false;
+    bool m_indices_size_dirty = false;
     mesh_type m_type = mesh_type::custom;
 };
 
@@ -70,7 +76,9 @@ struct mesh_generator {
         };
 
         m.m_positions_dirty = true;
+        m.m_positions_size_dirty = true;
         m.m_indices_dirty = true;
+        m.m_indices_size_dirty = true;
 
         return m;
     }
@@ -114,11 +122,17 @@ struct mesh_generator {
         }
 
         m.m_positions_dirty = true;
+        m.m_positions_size_dirty = true;
         m.m_normals_dirty = true;
+        m.m_normals_size_dirty = true;
         m.m_tangents_dirty = true;
+        m.m_tangents_size_dirty = true;
         m.m_bitangents_dirty = true;
+        m.m_bitangents_size_dirty = true;
         m.m_uvs_dirty = true;
+        m.m_uvs_size_dirty = true;
         m.m_indices_dirty = true;
+        m.m_indices_size_dirty = true;
 
         return m;
     }

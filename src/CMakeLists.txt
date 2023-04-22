@@ -18,6 +18,7 @@ FetchContent_MakeAvailable(EnTT)
 set(EXE_NAME "ege")
 
 set(SOURCES
+    render_buffers_system.cpp
     scene_view_system.cpp
     inspector_system.cpp
     scene_system.cpp
