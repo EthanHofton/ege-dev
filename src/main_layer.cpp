@@ -2,12 +2,14 @@
 #include <imgui_internal.h>
 #include <ege/ecs/system_manager.hpp>
 #include <ege/ecs/systems/scene_system.hpp>
+#include <ege/ecs/systems/scene_view_system.hpp>
 
 
 namespace ege {
 
 bool main_layer::on_attach(ere::attach_event& e) {
     system_manager::get<scene_system>()->add_scene("Scene 1");
+    system_manager::get<scene_view_system>();
     return false;
 }
 

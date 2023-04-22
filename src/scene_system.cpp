@@ -9,7 +9,7 @@ bool scene_system::on_gui_draw(gui_draw_event& event) {
 
     if (ImGui::BeginPopupContextWindow()) {
         if (ImGui::MenuItem("New Entity")) {
-            auto e = m_selected_scene->create_entity("New Entity");
+            auto e = m_selected_scene->create_entity();
             m_selected_entity = e;
         }
 
