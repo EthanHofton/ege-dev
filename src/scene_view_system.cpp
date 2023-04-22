@@ -112,6 +112,10 @@ bool scene_view_system::on_gui_draw(gui_draw_event& event) {
     if (m_drawbuffer->get_width() != imageSize.x || m_drawbuffer->get_height() != imageSize.y) {
         m_drawbuffer->resize(imageSize.x, imageSize.y);
         m_camera->set_aspect_ratio(imageSize.x / imageSize.y);
+        m_drawbuffer->bind();
+        ere::render_api::set_viewport({imageSize.x, imageSize.y});
+        m_drawbuffer->unbind();
+        ERE_INFO("Resized framebuffer to: {}, {}", imageSize.x, imageSize.y);
     }
 
     ImGui::Image((void*)(size_t)m_drawbuffer->get_color_attachemt()->get_texture_id(), imageSize);
