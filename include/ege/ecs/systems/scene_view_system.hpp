@@ -46,6 +46,8 @@ public:
     virtual bool on_draw(draw_event& event) override;
     virtual bool on_post_draw(post_draw_event& event) override;
 
+    virtual bool on_update(update_event& event) override;
+
     virtual bool on_gui_draw(gui_draw_event& event) override;
 
 private:
