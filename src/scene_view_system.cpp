@@ -11,9 +11,13 @@ namespace ege {
 
 
 scene_view_system::scene_view_system() {
-    m_drawbuffer = ere::framebuffer_api::create_framebuffer_api({ 1280, 720 });
+    m_drawbuffer = ere::framebuffer_api::create_framebuffer_api({ 1675, 820 });
     m_drawbuffer->add_color_attachment();
     m_drawbuffer->add_depth_stencil_attachment_write_only();
+
+    m_drawbuffer->bind();
+    ere::render_api::set_viewport({1675, 820});
+    m_drawbuffer->unbind();
 
 
     std::string m_shader_vert = 
@@ -51,6 +55,8 @@ scene_view_system::scene_view_system() {
 
     m_shader = ere::shader_api::create_shader_api(m_shader_vert, m_shader_frag);
     m_camera = ere::createRef<camera_test>();
+
+    m_camera->set_aspect_ratio(1675.0f / 820.0f);
 }
 
 bool scene_view_system::on_pre_draw(pre_draw_event& event) {
@@ -108,20 +114,63 @@ bool scene_view_system::on_post_draw(post_draw_event& event) {
 bool scene_view_system::on_gui_draw(gui_draw_event& event) {
     ImGui::Begin("Scene View");
 
+    static glm::vec2 d_size = { 0, 0 };
+    static std::chrono::steady_clock::time_point last_resize_time = std::chrono::steady_clock::now();
+    static bool has_resized = false;
+
+    static glm::vec2 d_viewport_size = { 0, 0 };
+    static std::chrono::steady_clock::time_point last_viewport_resize_time = std::chrono::steady_clock::now();
+    static bool has_viewport_resized = false;
+
     ImVec2 imageSize = ImGui::GetContentRegionAvail();
-    if (m_drawbuffer->get_width() != imageSize.x || m_drawbuffer->get_height() != imageSize.y) {
+
+    if (d_size.x != 0 || d_size.y != 0) {
+        if (!has_resized) {
+            last_resize_time = std::chrono::steady_clock::now();
+            has_resized = true;
+        }
+    } else {
+        has_resized = false;
+    }
+
+    if (d_viewport_size.x != 0 || d_viewport_size.y != 0) {
+        if (!has_viewport_resized) {
+            last_viewport_resize_time = std::chrono::steady_clock::now();
+            has_viewport_resized = true;
+        }
+    } else {
+        has_viewport_resized = false;
+    }
+
+    auto time_since_resize = std::chrono::steady_clock::now() - last_resize_time;
+    if (has_resized && time_since_resize >= std::chrono::milliseconds(500)) {
         m_drawbuffer->resize(imageSize.x, imageSize.y);
         m_camera->set_aspect_ratio(imageSize.x / imageSize.y);
         m_drawbuffer->bind();
         ere::render_api::set_viewport({imageSize.x, imageSize.y});
         m_drawbuffer->unbind();
-        ERE_INFO("Resized framebuffer to: {}, {}", imageSize.x, imageSize.y);
+
+        has_resized = false;
+    }
+
+    auto time_since_viewport_resize = std::chrono::steady_clock::now() - last_viewport_resize_time;
+    if (has_viewport_resized && time_since_viewport_resize >= std::chrono::milliseconds(200)) {
+        m_drawbuffer->bind();
+        ere::render_api::set_viewport({ imageSize.x, imageSize.y });
+        m_drawbuffer->unbind();
+
+        has_viewport_resized = false;
     }
 
     ImGui::Image((void*)(size_t)m_drawbuffer->get_color_attachemt()->get_texture_id(), imageSize);
 
     ImGui::End();
-    
+
+    d_size = { m_drawbuffer->get_width() - imageSize.x, m_drawbuffer->get_height() - imageSize.y };
+    m_drawbuffer->bind();
+    d_viewport_size = { ere::render_api::get_viewport().x - m_drawbuffer->get_width(), ere::render_api::get_viewport().y - m_drawbuffer->get_height() };
+    m_drawbuffer->unbind();
+
     return false;
 }
 
