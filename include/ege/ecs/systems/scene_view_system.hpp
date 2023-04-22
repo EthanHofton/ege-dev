@@ -52,6 +52,7 @@ private:
 
     ere::ref<ere::framebuffer_api> m_drawbuffer;
     ere::ref<ere::shader_api> m_shader;
+    ere::ref<ere::shader_api> m_outline_shader;
     ere::ref<camera_test> m_camera;
 
 };

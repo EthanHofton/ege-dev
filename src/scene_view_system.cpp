@@ -53,7 +53,18 @@ scene_view_system::scene_view_system() {
         "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
         "}\n\0";
 
+    std::string m_outline_shader_frag =
+        "#version 330 core\n"
+
+        "out vec4 FragColor;\n"
+
+        "void main()\n"
+        "{\n"
+        "   FragColor = vec4(0.0f, 0.5f, 0.9f, 1.0f);\n"
+        "}\n\0";
+
     m_shader = ere::shader_api::create_shader_api(m_shader_vert, m_shader_frag);
+    m_outline_shader = ere::shader_api::create_shader_api(m_shader_vert, m_outline_shader_frag);
     m_camera = ere::createRef<camera_test>();
 
     m_camera->set_aspect_ratio(1675.0f / 820.0f);
@@ -72,8 +83,18 @@ bool scene_view_system::on_pre_draw(pre_draw_event& event) {
 
 bool scene_view_system::on_draw(draw_event& event) {
 
+    ere::render_api::enable_stencil_testing();
+    ere::render_api::set_stencil_operation(ere::render_api::stencil_operation::KEEP, ere::render_api::stencil_operation::KEEP, ere::render_api::stencil_operation::REPLACE);
+
     auto view = event.get_registry().view<renderer>();
     for (auto& e : view) {
+        if (e == system_manager::get<scene_system>()->get_selected_entity()) {
+            ere::render_api::set_stencil_function(ere::render_api::testing_function::ALWAYS, 1, 0xFF);
+            ere::render_api::set_stencil_mask(0xFF);
+        } else {
+            ere::render_api::set_stencil_mask(0x00);
+        }
+
         auto& ren = view.get<renderer>(e);
 
         m_shader->bind();
@@ -86,6 +107,8 @@ bool scene_view_system::on_draw(draw_event& event) {
             model = glm::rotate(model, glm::radians(event.get_registry().get<transform>(e).m_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
             model = glm::scale(model, event.get_registry().get<transform>(e).m_scale);
             m_shader->set_uniform_mat4f("u_model", model);
+        } else {
+            m_shader->set_uniform_mat4f("u_model", glm::mat4(1.0f));
         }
 
         ere::render_api::set_camera(m_camera);
@@ -99,6 +122,49 @@ bool scene_view_system::on_draw(draw_event& event) {
         }
 
     }
+
+    // draw the outline of the selected entity
+    if (system_manager::get<scene_system>()->get_selected_entity() != entt::null) {
+        auto e = system_manager::get<scene_system>()->get_selected_entity();
+        if (event.get_registry().any_of<renderer>(e)) {
+            ere::render_api::set_stencil_function(ere::render_api::testing_function::NOTEQUAL, 1, 0xFF);
+            ere::render_api::set_stencil_mask(0x00);
+            ere::render_api::disable_depth_testing();
+
+            auto& ren = event.get_registry().get<renderer>(e);
+
+            m_outline_shader->bind();
+
+            if (event.get_registry().any_of<transform>(e)) {
+                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::translate(model, event.get_registry().get<transform>(e).m_position);
+                model = glm::rotate(model, glm::radians(event.get_registry().get<transform>(e).m_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+                model = glm::rotate(model, glm::radians(event.get_registry().get<transform>(e).m_rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+                model = glm::rotate(model, glm::radians(event.get_registry().get<transform>(e).m_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+                model = glm::scale(model, event.get_registry().get<transform>(e).m_scale + glm::vec3({ 0.01f, 0.01f, 0.01f }));
+                m_outline_shader->set_uniform_mat4f("u_model", model);
+            } else {
+                m_outline_shader->set_uniform_mat4f("u_model", glm::scale(glm::mat4(1.0f), glm::vec3({ 1.01f, 1.01f, 1.01f })));
+            }
+
+            ere::render_api::set_camera(m_camera);
+
+            if (ren.m_index_buffer_api) {
+                ere::render_api::draw_indexed(ren.m_vertex_array_api, m_outline_shader);
+            } else {
+                if (event.get_registry().any_of<mesh>(e)) {
+                    ere::render_api::draw_arrays(ren.m_vertex_array_api, m_outline_shader, event.get_registry().get<mesh>(e).m_positions.size());
+                }
+            }
+            
+            ere::render_api::set_stencil_mask(0xFF);
+            ere::render_api::set_stencil_function(ere::render_api::testing_function::ALWAYS, 1, 0xFF);
+            ere::render_api::enable_depth_testing();
+        }
+
+    }
+
+
 
     return false;
 }
