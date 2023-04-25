@@ -2,8 +2,12 @@
 #include <ege/ecs/components/transform.hpp>
 #include <ege/ecs/components/mesh.hpp>
 #include <ege/ecs/components/renderer.hpp>
-#include <ere/mappings/mouse_map.hpp>
+#include <ege/ecs/components/scene_camera.hpp>
 #include <ege/ecs/systems/scene_system.hpp>
+#include <ege/ecs/components/skybox.hpp>
+#include <ege/ecs/components/material.hpp>
+
+#include <ere/mappings/mouse_map.hpp>
 
 #include <imgui.h>
 
@@ -19,6 +23,8 @@ scene::scene() {
     inspector_s->register_component<mesh>("Mesh");
     inspector_s->register_component<renderer>("Renderer");
     inspector_s->register_component<UUID>("UUID");
+    inspector_s->register_component<skybox>("Skybox");
+    inspector_s->register_component<material>("Material");
 };
 
 entt::entity scene::create_entity() {

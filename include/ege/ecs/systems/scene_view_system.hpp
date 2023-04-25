@@ -5,37 +5,9 @@
 #include <ere/api/framebuffer_api.hpp>
 #include <ere/api/shader_api.hpp>
 #include <ere/api/camera_api.hpp>
+#include <ere/api/vertex_array_api.hpp>
 
 namespace ege {
-
-class camera_test : public ere::camera_api {
-public:
-    camera_test () {
-        m_projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-        m_view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    }
-
-    void set_aspect_ratio(float aspect_ratio) {
-        m_projection = glm::perspective(glm::radians(45.0f), aspect_ratio, 0.1f, 100.0f);
-    }
-
-    const glm::mat4& get_projection_matrix() override {
-        return m_projection;
-    }
-
-    const glm::mat4& get_view_matrix() override {
-        return m_view;
-    }
-
-    glm::vec3 get_position() const override {
-        return glm::vec3(0.0f, 0.0f, 0.0f);
-    }
-
-private:
-
-    glm::mat4 m_projection;
-    glm::mat4 m_view;
-};
 
 class scene_view_system : public system {
 public:
@@ -52,11 +24,25 @@ public:
 
 private:
 
+    void create_grid();
+
     ere::ref<ere::framebuffer_api> m_drawbuffer;
     ere::ref<ere::shader_api> m_shader;
     ere::ref<ere::shader_api> m_outline_shader;
-    ere::ref<camera_test> m_camera;
 
+    struct grid {
+        ere::ref<ere::vertex_array_api> vao;
+        ere::ref<ere::vertex_buffer_api> vbo_pos;
+        std::vector<glm::vec3> vertices;
+        ere::ref<ere::vertex_buffer_api> vbo_uv;
+        std::vector<glm::vec2> uvs;
+        ere::ref<ere::index_buffer_api> ibo;
+        std::vector<uint32_t> indices;
+        ere::ref<ere::texture2d_api> tex;
+        ere::ref<ere::shader_api> shader;
+
+        glm::mat4 transform;
+    } m_grid;
 };
 
 }

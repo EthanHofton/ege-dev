@@ -17,11 +17,11 @@ inline void inspector_system::component_editor_widget<transform>(entt::registry&
     auto& t = t_registery.get<transform>(t_entity);
 
     ImGui::Text("Position");
-    ImGui::DragFloat3("##position", &t.m_position.x, 0.1f);
+    ImGui::DragFloat3("##position", &t.m_position.x, 1);
     ImGui::Text("Rotation");
-    ImGui::DragFloat3("##rotation", &t.m_rotation.x, 0.1f);
+    ImGui::DragFloat3("##rotation", &t.m_rotation.x, 1);
     ImGui::Text("Scale");
-    ImGui::DragFloat3("##scale", &t.m_scale.x, 0.1f);
+    ImGui::DragFloat3("##scale", &t.m_scale.x, 1);
 }
 
 }

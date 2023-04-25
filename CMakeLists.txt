@@ -23,3 +23,4 @@ set(CMAKE_MACOSX_RPATH ON)
 
 add_subdirectory(src)
 add_subdirectory(include)
+add_subdirectory(res)
