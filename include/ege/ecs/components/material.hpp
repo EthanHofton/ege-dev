@@ -1,7 +1,7 @@
 #ifndef __EGE_MATERIAL_HPP__
 #define __EGE_MATERIAL_HPP__
 
-#include <ere/api/texture_api.hpp>
+#include <ere/api/texture2d_api.hpp>
 #include <ere/api/shader_api.hpp>
 #include <ege/ecs/systems/inspector_system.hpp>
 
@@ -49,21 +49,65 @@ struct material_generator {
         m.m_ao = nullptr;
         m.m_emission = nullptr;
 
-        static ere::ref<ere::shader_api> constant_shader = ere::shader_api::create_shader_api_from_file("res/shaders/material/constant_shader/vert.glsl", "res/shaders/material/constant_shader/frag.glsl");
+        ere::ref<ere::shader_api> constant_shader = ere::shader_api::create_shader_api_from_file("res/shaders/material/constant_shader/vert.glsl", "res/shaders/material/constant_shader/frag.glsl");
+        ere::ref<ere::shader_api> texture_shader = ere::shader_api::create_shader_api_from_file("res/shaders/material/texture_shader/vert.glsl", "res/shaders/material/texture_shader/frag.glsl");
+        ere::ref<ere::shader_api> texture_normal_shader = ere::shader_api::create_shader_api_from_file("res/shaders/material/texture_normal_shader/vert.glsl", "res/shaders/material/texture_normal_shader/frag.glsl");
 
-        // static ere::ref<shader_api> texture_normal_shader = ere::shader_api::create_shader_api_from_file();
-        // static ere::ref<shader_api> constant_shader = ere::shader_api::create_shader_api_from_file();
-
-        // m.m_texture_shader = texture_shader;
-        m.m_texture_shader = nullptr;
-        // m.m_texture_normal_shader = texture_normal_shader;
-        m.m_texture_normal_shader = nullptr;
+        m.m_texture_shader = texture_shader;
+        m.m_texture_normal_shader = texture_normal_shader;
         m.m_constant_shader = constant_shader;
-        // m.m_constant_shader = nullptr;
 
         m.m_active_shader = m.m_constant_shader;
         
         return m;
+    }
+
+    static material generate_rustic_sphere_material() {
+        material m;
+        
+        ere::ref<ere::shader_api> constant_shader = ere::shader_api::create_shader_api_from_file("res/shaders/material/constant_shader/vert.glsl", "res/shaders/material/constant_shader/frag.glsl");
+        ere::ref<ere::shader_api> texture_shader = ere::shader_api::create_shader_api_from_file("res/shaders/material/texture_shader/vert.glsl", "res/shaders/material/texture_shader/frag.glsl");
+        ere::ref<ere::shader_api> texture_normal_shader = ere::shader_api::create_shader_api_from_file("res/shaders/material/texture_normal_shader/vert.glsl", "res/shaders/material/texture_normal_shader/frag.glsl");
+
+        m.m_albedo = ere::texture2d_api::create_texture2d_api("res/materials/rustic_metal/albedo.png");
+        m.m_normal = ere::texture2d_api::create_texture2d_api("res/materials/rustic_metal/normal.png");
+        m.m_metallic = ere::texture2d_api::create_texture2d_api("res/materials/rustic_metal/metallic.png");
+        m.m_roughness = ere::texture2d_api::create_texture2d_api("res/materials/rustic_metal/roughness.png");
+        m.m_ao = ere::texture2d_api::create_texture2d_api("res/textures/white.png");
+        m.m_emission = ere::texture2d_api::create_texture2d_api("res/textures/black.png");
+
+        m.m_texture_shader = texture_shader;
+        m.m_texture_normal_shader = texture_normal_shader;
+        m.m_constant_shader = constant_shader;
+
+        m.m_active_shader = m.m_texture_normal_shader;
+
+        return m;
+    }
+
+    static material generate_bick_material() {
+        material m;
+
+        ere::ref<ere::shader_api> constant_shader = ere::shader_api::create_shader_api_from_file("res/shaders/material/constant_shader/vert.glsl", "res/shaders/material/constant_shader/frag.glsl");
+        ere::ref<ere::shader_api> texture_shader = ere::shader_api::create_shader_api_from_file("res/shaders/material/texture_shader/vert.glsl", "res/shaders/material/texture_shader/frag.glsl");
+        ere::ref<ere::shader_api> texture_normal_shader = ere::shader_api::create_shader_api_from_file("res/shaders/material/texture_normal_shader/vert.glsl", "res/shaders/material/texture_normal_shader/frag.glsl");
+
+        m.m_albedo = ere::texture2d_api::create_texture2d_api("res/materials/brickwall/brickwall.jpg");
+        m.m_normal = ere::texture2d_api::create_texture2d_api("res/materials/brickwall/brickwall_normal.jpg");
+        m.m_metallic = ere::texture2d_api::create_texture2d_api("res/textures/black.png");
+        m.m_roughness = ere::texture2d_api::create_texture2d_api("res/textures/black.png");
+        m.m_ao = ere::texture2d_api::create_texture2d_api("res/textures/white.png");
+        m.m_emission = ere::texture2d_api::create_texture2d_api("res/textures/black.png");
+
+        m.m_texture_shader = texture_shader;
+        m.m_texture_normal_shader = texture_normal_shader;
+        m.m_constant_shader = constant_shader;
+
+        m.m_active_shader = m.m_texture_normal_shader;
+
+        return m;
+
+
     }
 };
 
@@ -81,6 +125,18 @@ inline void inspector_system::component_editor_widget<material>(entt::registry& 
     ImGui::DragFloat("##ao_value", &m.m_ao_value, 0.01f);
     ImGui::Text("Emission Color");
     ImGui::DragFloat3("##emission_color", &m.m_emission_color.x, 0.01f);
+
+    if (ImGui::Button("Default Material")) {
+        m = material_generator::generate_default_material();
+    }
+
+    if (ImGui::Button("Rustic Sphere Material")) {
+        m = material_generator::generate_rustic_sphere_material();
+    }
+
+    if (ImGui::Button("Brickwall Material")) {
+        m = material_generator::generate_bick_material();
+    }
 }
 
 template<>

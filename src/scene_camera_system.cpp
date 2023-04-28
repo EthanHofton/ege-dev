@@ -197,7 +197,7 @@ entt::entity scene_camera_system::create_camera(entt::registry& t_registery) {
     t_registery.get<scene_camera>(entity).m_camera = std::make_shared<scene_camera_api>();
     t_registery.get<scene_camera>(entity).m_fov = 45.0f;
 
-    t_registery.get<transform>(entity).m_position = {0.0f, 5.0f, -3.0f};
+    t_registery.get<transform>(entity).m_position = {0.0f, 10.0f, 20.0f};
     t_registery.get<transform>(entity).m_rotation = {0.0f, -90.0f, 0.0f};
 
     return entity;

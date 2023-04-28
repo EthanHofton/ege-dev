@@ -67,6 +67,7 @@ scene_view_system::scene_view_system() {
     ere::render_api::enable_stencil_testing();
     ere::render_api::set_stencil_function(ere::render_api::testing_function::NOTEQUAL, 1, 0xFF);
     ere::render_api::set_stencil_operation(ere::render_api::stencil_operation::KEEP, ere::render_api::stencil_operation::REPLACE, ere::render_api::stencil_operation::REPLACE);
+
 }
 
 bool scene_view_system::on_pre_draw(pre_draw_event& event) {
@@ -76,7 +77,7 @@ bool scene_view_system::on_pre_draw(pre_draw_event& event) {
     // clear colors
     ere::render_api::clear_color({ 0.1f, 0.1f, 0.1f, 1.0f });
     ere::render_api::clear_buffers();
-    
+
     return false;
 }
 
@@ -131,14 +132,55 @@ bool scene_view_system::on_draw(draw_event& event) {
         ere::render_api::set_camera(system_manager::get<scene_camera_system>()->get_camera(event.get_registry()).m_camera);
 
         if (ren.m_index_buffer_api) {
-            ere::render_api::draw_indexed(ren.m_vertex_array_api, mat.m_active_shader);
+            if (mat.m_active_shader == mat.m_texture_shader) {
+                ere::render_api::draw_indexed_textured(ren.m_vertex_array_api, mat.m_active_shader, {
+                    mat.m_albedo,
+                    mat.m_roughness,
+                    mat.m_metallic,
+                    mat.m_ao,
+                    mat.m_emission,
+                });
+            } else if (mat.m_active_shader == mat.m_texture_normal_shader) {
+                ere::render_api::draw_indexed_textured(ren.m_vertex_array_api, mat.m_active_shader, {
+                    mat.m_albedo,
+                    mat.m_roughness,
+                    mat.m_metallic,
+                    mat.m_ao,
+                    mat.m_emission,
+                    mat.m_normal,
+                });
+            } else {
+                ere::render_api::draw_indexed(ren.m_vertex_array_api, mat.m_active_shader);
+            }
         } else {
             if (event.get_registry().any_of<mesh>(e)) {
-                ere::render_api::draw_arrays(ren.m_vertex_array_api, mat.m_active_shader, event.get_registry().get<mesh>(e).m_positions.size());
+                int count = event.get_registry().get<mesh>(e).m_positions.size();
+
+                if (mat.m_active_shader == mat.m_texture_shader) {
+                    ere::render_api::draw_arrays_textured(ren.m_vertex_array_api, mat.m_active_shader, count, {
+                        mat.m_albedo,
+                        mat.m_roughness,
+                        mat.m_metallic,
+                        mat.m_ao,
+                        mat.m_emission,
+                    });
+                } else if (mat.m_active_shader == mat.m_texture_normal_shader) {
+                    ere::render_api::draw_arrays_textured(ren.m_vertex_array_api, mat.m_active_shader, count, {
+                        mat.m_albedo,
+                        mat.m_roughness,
+                        mat.m_metallic,
+                        mat.m_ao,
+                        mat.m_emission,
+                        mat.m_normal,
+                    });
+                } else {
+                    ere::render_api::draw_arrays(ren.m_vertex_array_api, mat.m_active_shader, count);
+                }
             }
         }
 
     }
+
 
     ere::render_api::set_stencil_mask(0x00);
     // ere::render_api::set_stencil_function(ere::render_api::testing_function::NOTEQUAL, 1, 0xFF);

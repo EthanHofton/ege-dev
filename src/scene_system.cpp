@@ -4,6 +4,11 @@
 #include <ege/ecs/components/mesh.hpp>
 #include <ege/ecs/components/renderer.hpp>
 #include <ege/ecs/components/transform.hpp>
+#include <ege/ecs/components/material.hpp>
+#include <ege/ecs/components/spot_light.hpp>
+#include <ege/ecs/components/point_light.hpp>
+#include <ege/ecs/components/directional_light.hpp>
+#include <ege/ecs/components/area_light.hpp>
 
 namespace ege {
 
@@ -22,6 +27,7 @@ bool scene_system::on_gui_draw(gui_draw_event& event) {
             m_selected_scene->get_registry().emplace<mesh>(e, mesh_generator::generate_cube_mesh({1,1,1}));
             m_selected_scene->get_registry().emplace<renderer>(e);
             m_selected_scene->get_registry().emplace<transform>(e);
+            m_selected_scene->get_registry().emplace<material>(e, material_generator::generate_default_material());
         }
 
         if (ImGui::MenuItem("New Sphere")) {
@@ -29,6 +35,44 @@ bool scene_system::on_gui_draw(gui_draw_event& event) {
             m_selected_entity = e;
             m_selected_scene->get_registry().emplace<mesh>(e, mesh_generator::generate_sphere_mesh(1));
             m_selected_scene->get_registry().emplace<renderer>(e);
+            m_selected_scene->get_registry().emplace<transform>(e);
+            m_selected_scene->get_registry().emplace<material>(e, material_generator::generate_default_material());
+        }
+
+        if (ImGui::MenuItem("New Plane")) {
+            auto e = m_selected_scene->create_entity("Plane");
+            m_selected_entity = e;
+            m_selected_scene->get_registry().emplace<mesh>(e, mesh_generator::generate_plane_mesh({1,1}));
+            m_selected_scene->get_registry().emplace<renderer>(e);
+            m_selected_scene->get_registry().emplace<transform>(e);
+            m_selected_scene->get_registry().emplace<material>(e, material_generator::generate_default_material());
+        }
+
+        if (ImGui::MenuItem("New Point Light")) {
+            auto e = m_selected_scene->create_entity("Point Light");
+            m_selected_entity = e;
+            m_selected_scene->get_registry().emplace<point_light>(e);
+            m_selected_scene->get_registry().emplace<transform>(e);
+        }
+
+        if (ImGui::MenuItem("New Spot Light")) {
+            auto e = m_selected_scene->create_entity("Spot Light");
+            m_selected_entity = e;
+            m_selected_scene->get_registry().emplace<spot_light>(e);
+            m_selected_scene->get_registry().emplace<transform>(e);
+        }
+
+        if (ImGui::MenuItem("New Directional Light")) {
+            auto e = m_selected_scene->create_entity("Directional Light");
+            m_selected_entity = e;
+            m_selected_scene->get_registry().emplace<directional_light>(e);
+            m_selected_scene->get_registry().emplace<transform>(e);
+        }
+
+        if (ImGui::MenuItem("New Area Light")) {
+            auto e = m_selected_scene->create_entity("Area Light");
+            m_selected_entity = e;
+            m_selected_scene->get_registry().emplace<area_light>(e);
             m_selected_scene->get_registry().emplace<transform>(e);
         }
 

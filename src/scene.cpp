@@ -6,6 +6,10 @@
 #include <ege/ecs/systems/scene_system.hpp>
 #include <ege/ecs/components/skybox.hpp>
 #include <ege/ecs/components/material.hpp>
+#include <ege/ecs/components/point_light.hpp>
+#include <ege/ecs/components/spot_light.hpp>
+#include <ege/ecs/components/directional_light.hpp>
+#include <ege/ecs/components/area_light.hpp>
 
 #include <ere/mappings/mouse_map.hpp>
 
@@ -25,6 +29,11 @@ scene::scene() {
     inspector_s->register_component<UUID>("UUID");
     inspector_s->register_component<skybox>("Skybox");
     inspector_s->register_component<material>("Material");
+
+    inspector_s->register_component<point_light>("Point Light");
+    inspector_s->register_component<spot_light>("Spot Light");
+    inspector_s->register_component<directional_light>("Directional Light");
+    inspector_s->register_component<area_light>("Area Light");
 };
 
 entt::entity scene::create_entity() {

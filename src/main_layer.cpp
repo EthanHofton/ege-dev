@@ -6,7 +6,7 @@
 #include <ege/ecs/systems/render_buffers_system.hpp>
 #include <ege/ecs/systems/scene_camera_system.hpp>
 #include <ege/ecs/systems/material_system.hpp>
-
+#include <ege/ecs/systems/light_system.hpp>
 
 namespace ege {
 
@@ -17,6 +17,7 @@ bool main_layer::on_attach(ere::attach_event& e) {
     system_manager::get<render_buffers_system>();
     system_manager::get<scene_camera_system>();
     system_manager::get<material_system>();
+    system_manager::get<light_system>();
 
     return false;
 }

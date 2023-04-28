@@ -18,6 +18,7 @@ FetchContent_MakeAvailable(EnTT)
 set(EXE_NAME "ege")
 
 set(SOURCES
+    light_system.cpp
     material_system.cpp
     scene_camera_system.cpp
     render_buffers_system.cpp
